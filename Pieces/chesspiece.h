@@ -2,7 +2,7 @@
 #define CHESSPIECE_H
 #include <list>
 #include <QSharedPointer>
-#include "player.h"
+#include "GameLogic/player.h"
 
 namespace qtchess {
 
