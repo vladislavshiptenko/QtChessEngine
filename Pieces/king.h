@@ -6,7 +6,7 @@ namespace qtchess {
 
 class King : public ChessPiece {
 public:
-    King(char posx, char posy, Player* player = nullptr) : ChessPiece(posx, posy, player)  { }
+    King(char posx, char posy, QString image_source, Player* player = nullptr) : ChessPiece(posx, posy, image_source, player)  { }
     std::list<position> Moves() override;
 };
 

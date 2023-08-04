@@ -2,12 +2,17 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
 import QtQuick.Controls
+import ChessEngine
 
 Window {
     minimumWidth: 1280
     minimumHeight: 720
     visible: true
     title: qsTr("QtChessEngine")
+
+    ChessBoard {
+        id: logicBoard
+    }
 
     GridLayout {
         id: grid
@@ -69,12 +74,56 @@ Window {
 
             color: "#312e2b"
 
-            Image {
+            Canvas {
                 id: board
                 width: Math.min(parent.width - 100, parent.height - 100)
                 height: width
-                source: "qrc:/Assets/chessboard.png"
                 anchors.centerIn: parent
+
+                property var pieces: []
+                property int board_width: 8
+                property int board_height: 8
+
+                function defaultInitialization() {
+                    for (var i = 0; i < board_width; i++) {
+                        board.pieces.push([]);
+                        for (var j = 0; j < board_height; j++) {
+                            board.pieces[i].push(logicBoard.getImage(i, j));
+                        }
+                    }
+                }
+
+                Component.onCompleted: {
+                    defaultInitialization()
+                    loadImage("qrc:/Assets/chessboard.png")
+                    loadImage("qrc:/Assets/pawn_white.png")
+                    loadImage("qrc:/Assets/bishop_white.png")
+                    loadImage("qrc:/Assets/castle_white.png")
+                    loadImage("qrc:/Assets/king_white.png")
+                    loadImage("qrc:/Assets/knight_white.png")
+                    loadImage("qrc:/Assets/queen_black.png")
+                    loadImage("qrc:/Assets/pawn_black.png")
+                    loadImage("qrc:/Assets/bishop_black.png")
+                    loadImage("qrc:/Assets/castle_black.png")
+                    loadImage("qrc:/Assets/king_black.png")
+                    loadImage("qrc:/Assets/knight_black.png")
+                    loadImage("qrc:/Assets/queen_black.png")
+                }
+
+                onPaint: {
+                    var ctx = getContext("2d");
+                    ctx.drawImage("qrc:/Assets/chessboard.png", 0, 0, board.width, board.height);
+
+                    var cell_w = board.width / board_width;
+                    var cell_y = board.height / board_width;
+                    for (var i = 0; i < board_width; i++) {
+                        for (var j = 0; j < board_height; j++) {
+                            if (board.pieces[i][j] === "")
+                                continue;
+                            ctx.drawImage(board.pieces[i][j], j * cell_w, i * cell_y, cell_w, cell_y);
+                        }
+                    }
+                }
             }
         }
         Rectangle {

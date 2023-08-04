@@ -29,6 +29,7 @@ qt_add_qml_module(appChessEngine
     URI ChessEngine
     VERSION 1.0
     QML_FILES UserInterface/Main.qml UserInterface/ChessMode.qml UserInterface/Settings.qml
+    SOURCES GameLogic/chessboard.h GameLogic/chessboard.cpp
 )
 
 set_target_properties(appChessEngine PROPERTIES

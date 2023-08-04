@@ -24,16 +24,19 @@ class ChessBoard : public QObject {
     Q_OBJECT
     QML_ELEMENT
 public:
-    ChessBoard() {};
+    ChessBoard();
     void StartGame(const Mode& mode);
-    void DefautBoard(QSharedPointer<Player> p1, QSharedPointer<Player> p2);
+    Q_INVOKABLE QString getImage(size_t i, size_t j);
+    void DefaultBoard();
 
 private:
-    bool is_started;
-    bool is_check;
-    bool is_checkmate;
-    QSharedPointer<Player> p1;
-    QSharedPointer<Player> p2;
+    size_t board_width = 8;
+    size_t board_height = 8;
+    bool is_started = false;
+    bool is_check = false;
+    bool is_checkmate = false;
+    QSharedPointer<Player> p1 = nullptr;
+    QSharedPointer<Player> p2 = nullptr;
     QSharedPointer<ChessPiece> board[8][8];
 };
 
