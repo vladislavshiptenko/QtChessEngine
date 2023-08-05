@@ -28,7 +28,7 @@ qt_add_executable(appChessEngine
 qt_add_qml_module(appChessEngine
     URI ChessEngine
     VERSION 1.0
-    QML_FILES UserInterface/Main.qml UserInterface/ChessMode.qml UserInterface/Settings.qml
+    QML_FILES UserInterface/Main.qml UserInterface/ChessMode.qml UserInterface/Settings.qml UserInterface/BoardView.qml
     SOURCES GameLogic/chessboard.h GameLogic/chessboard.cpp
 )
 

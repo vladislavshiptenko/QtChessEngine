@@ -13,14 +13,20 @@ struct position {
 
 class ChessPiece {
 public:
-    ChessPiece(char posx, char posy, QString image_source, PlayerInfo* player_info = nullptr) : pos{posx, posy}, player_info(player_info), image_source(image_source)  { }
+    ChessPiece(char posx, char posy, QSharedPointer<PlayerInfo> player_info = nullptr) : pos{posx, posy}, player_info(player_info)  { }
     virtual std::list<position> Moves() = 0;
-    QString GetImageSource() { return image_source; }
+    QString GetImageSource() { return path + image_name; }
 
 protected:
+    QString black_piece_name = "black";
+    QString white_piece_name = "white";
+    QString piece_name;
     position pos;
-    QString image_source;
+    QString image_name;
     QSharedPointer<PlayerInfo> player_info;
+
+private:
+    QString path = "qrc:/Assets/";
 };
 
 }
