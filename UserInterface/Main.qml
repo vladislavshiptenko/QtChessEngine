@@ -82,11 +82,19 @@ Window {
 
             color: "#312e2b"
 
+            Player {
+                id: p1
+                anchors.top: parent.top
+            }
             BoardView {
                 id: board
                 width: Math.min(parent.width - 100, parent.height - 100)
                 height: width
                 anchors.centerIn: parent
+            }
+            Player {
+                id: p2
+                anchors.bottom: parent.bottom
             }
         }
         Rectangle {

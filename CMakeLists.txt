@@ -30,6 +30,7 @@ qt_add_qml_module(appChessEngine
     VERSION 1.0
     QML_FILES UserInterface/Main.qml UserInterface/ChessMode.qml UserInterface/Settings.qml
     UserInterface/BoardView.qml UserInterface/StartMenu.qml UserInterface/GameMenu.qml
+    UserInterface/Player.qml
     SOURCES GameLogic/chessboard.h GameLogic/chessboard.cpp
 )
 
