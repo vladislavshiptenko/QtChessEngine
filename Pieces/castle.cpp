@@ -2,23 +2,28 @@
 
 namespace qtchess {
 
-std::list<position> Castle::Moves() {
-    if (!player_info->YourTurn())
-        return std::list<position>();
+QList<QList<int>> Castle::Moves(const QSharedPointer<ChessPiece> board[][8], int posx, int posy) {
+    QList<QList<int>> moves;
 
-    std::list<position> moves;
-
-    for (char x = pos.posx + 1; x <= 'h'; x++) {
-        moves.push_back({x, pos.posy});
+    for (int x = posx + 1; x < 8; x++) {
+        if (!PushValidMove(board, moves, {x, posy}, posx, posy)) {
+            break;
+        }
     }
-    for (char x = pos.posx - 1; x >= 'a'; x--) {
-        moves.push_back({x, pos.posy});
+    for (int x = posx - 1; x >= 0; x--) {
+        if (!PushValidMove(board, moves, {x, posy}, posx, posy)) {
+            break;
+        }
     }
-    for (char y = pos.posy + 1; y <= '8'; y++) {
-        moves.push_back({pos.posx, y});
+    for (int y = posy + 1; y < 8; y++) {
+        if (!PushValidMove(board, moves, {posx, y}, posx, posy)) {
+            break;
+        }
     }
-    for (char y = pos.posy - 1; y >= '1'; y--) {
-        moves.push_back({pos.posx, y});
+    for (int y = posy - 1; y >= 0; y--) {
+        if (!PushValidMove(board, moves, {posx, y}, posx, posy)) {
+            break;
+        }
     }
 
     return moves;

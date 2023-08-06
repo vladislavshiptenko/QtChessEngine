@@ -19,8 +19,12 @@ class ChessBoard : public QObject {
 public:
     ChessBoard();
     Q_INVOKABLE void startGame(const QString& mode);
-    Q_INVOKABLE QString getImage(size_t i, size_t j);
+    Q_INVOKABLE QString getImage(size_t posx, size_t posy);
+    Q_INVOKABLE bool isYourPiece(size_t posx, size_t posy);
+    Q_INVOKABLE QList<QList<int>> validMoves(size_t posx, size_t posy);
+    Q_INVOKABLE void move(size_t posx, size_t posy);
     void SetDefaultBoard(QSharedPointer<Player> p1 = nullptr, QSharedPointer<Player> p2 = nullptr);
+    bool IsCheck(QSharedPointer<Player> p) const;
 
 signals:
     void gameStarted();
@@ -32,6 +36,8 @@ private:
     bool is_check = false;
     bool is_checkmate = false;
     Mode mode;
+    size_t piece_x;
+    size_t piece_y;
     QSharedPointer<Player> p1 = nullptr;
     QSharedPointer<Player> p2 = nullptr;
     QSharedPointer<ChessPiece> board[8][8];

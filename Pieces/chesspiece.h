@@ -3,27 +3,24 @@
 #include <list>
 #include <QSharedPointer>
 #include "GameLogic/player.h"
+#include <QList>
 
 namespace qtchess {
 
-struct position {
-    char posx;
-    char posy;
-};
-
 class ChessPiece {
 public:
-    ChessPiece(char posx, char posy, QSharedPointer<PlayerInfo> player_info = nullptr) : pos{posx, posy}, player_info(player_info)  { }
-    virtual std::list<position> Moves() = 0;
-    QString GetImageSource() { return path + image_name; }
+    ChessPiece(QSharedPointer<const Player> player = nullptr) : player(player)  { }
+    virtual QList<QList<int>> Moves(const QSharedPointer<ChessPiece> board[][8], int posx, int posy) = 0;
+    QString GetImageSource() const noexcept { return path + image_name; }
+    QSharedPointer<const Player> GetPlayerInfo() const noexcept { return player; }
 
 protected:
     QString black_piece_name = "black";
     QString white_piece_name = "white";
     QString piece_name;
-    position pos;
     QString image_name;
-    QSharedPointer<PlayerInfo> player_info;
+    QSharedPointer<const Player> player;
+    bool PushValidMove(const QSharedPointer<ChessPiece> board[][8], QList<QList<int>>& moves, const QList<int>& move, int posx, int posy);
 
 private:
     QString path = "qrc:/Assets/";

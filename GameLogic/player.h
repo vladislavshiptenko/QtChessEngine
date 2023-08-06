@@ -1,25 +1,27 @@
 #ifndef PLAYER_H
 #define PLAYER_H
+#include <QObject>
 
 namespace qtchess {
 
-class PlayerInfo {
+class Player : public QObject {
+    Q_OBJECT
+
 public:
-    PlayerInfo(bool is_white, bool your_turn, bool is_bottom) : is_white(is_white), your_turn(your_turn), is_bottom(is_bottom) { };
+    Player(bool is_white, bool your_turn, bool is_bottom) : is_white(is_white), your_turn(your_turn), is_bottom(is_bottom) { };
+    virtual void Move();
+    void YourTurn();
     bool IsWhite() const noexcept;
-    bool YourTurn() const noexcept;
+    bool IsYourTurn() const noexcept;
     bool IsBottom() const noexcept;
+
+signals:
+    void MadeMove();
 
 private:
     bool is_white;
     bool your_turn;
     bool is_bottom;
-};
-
-class Player : public PlayerInfo {
-public:
-    Player(bool is_white, bool your_turn, bool is_bottom) : PlayerInfo(is_white, your_turn, is_bottom) { };
-    virtual void Move();
 };
 
 }

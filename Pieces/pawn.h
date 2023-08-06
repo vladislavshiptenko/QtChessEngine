@@ -6,20 +6,23 @@ namespace qtchess {
 
 class Pawn : public ChessPiece {
 public:
-    Pawn(char posx, char posy, QString image_name) : ChessPiece(posx, posy)  {
+    Pawn(QString image_name)  {
         this->image_name = image_name + ".png";
     }
-    Pawn(char posx, char posy, QSharedPointer<PlayerInfo> player_info) : ChessPiece(posx, posy, player_info) {
+    Pawn(QSharedPointer<const Player> player) : ChessPiece(player) {
         piece_name = "pawn_";
-        if (this->player_info->IsWhite())
+        if (this->player->IsWhite())
             this->image_name = piece_name + white_piece_name + ".png";
         else
             this->image_name = piece_name + black_piece_name + ".png";
     }
-    std::list<position> Moves() override;
+    QList<QList<int>> Moves(const QSharedPointer<ChessPiece> board[][8], int posx, int posy) override;
+    void SetMadeMove() { made_move = true; }
+    void PushValidStraightMove(const QSharedPointer<ChessPiece> board[][8], QList<QList<int>>& moves, const QList<int>& move);
+    void PushValidDiagonalMove(const QSharedPointer<ChessPiece> board[][8], QList<QList<int>>& moves, const QList<int>& move, int posx, int posy);
 
 private:
-    bool is_moved = false;
+    bool made_move = false;
 };
 
 }

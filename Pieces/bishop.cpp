@@ -2,23 +2,28 @@
 
 namespace qtchess {
 
-std::list<position> Bishop::Moves() {
-    if (!player_info->YourTurn())
-        return std::list<position>();
+QList<QList<int>> Bishop::Moves(const QSharedPointer<ChessPiece> board[][8], int posx, int posy) {
+    QList<QList<int>> moves;
 
-    std::list<position> moves;
-
-    for (char i = 1; pos.posx - i >= 'a' && pos.posy - i >= '0'; i++) {
-        moves.push_back({char(pos.posx - i), char(pos.posy - i)});
+    for (int i = 1; posx - i >= 0 && posy - i >= 0; i++) {
+        if (!PushValidMove(board, moves, {posx - i, posy - i}, posx, posy)) {
+            break;
+        }
     }
-    for (char i = 1; pos.posx - i >= 'a' && pos.posy + i <= '8'; i++) {
-        moves.push_back({char(pos.posx - i), char(pos.posy + i)});
+    for (int i = 1; posx - i >= 0 && posy + i < 8; i++) {
+        if (!PushValidMove(board, moves, {posx - i, posy + i}, posx, posy)) {
+            break;
+        }
     }
-    for (char i = 1; pos.posx + i <= 'h' && pos.posy - i >= '0'; i++) {
-        moves.push_back({char(pos.posx + i), char(pos.posy - i)});
+    for (int i = 1; posx + i < 8 && posy - i >= 0; i++) {
+        if (!PushValidMove(board, moves, {posx + i, posy - i}, posx, posy)) {
+            break;
+        }
     }
-    for (char i = 1; pos.posx + i <= 'h' && pos.posy + i <= '8'; i++) {
-        moves.push_back({char(pos.posx + i), char(pos.posy + i)});
+    for (int i = 1; posx + i < 8 && posy + i < 8; i++) {
+        if (!PushValidMove(board, moves, {posx + i, posy + i}, posx, posy)) {
+            break;
+        }
     }
 
     return moves;
