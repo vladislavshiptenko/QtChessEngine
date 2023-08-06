@@ -10,8 +10,8 @@
 namespace qtchess {
 
 ChessBoard::ChessBoard() {
-    for (size_t i = 0; i < board_width; i++) {
-        for (size_t j = 0; j < board_height; j++) {
+    for (size_t i = 0; i < m_cell_count; i++) {
+        for (size_t j = 0; j < m_cell_count; j++) {
             board[i][j] = nullptr;
         }
     }
@@ -34,7 +34,7 @@ void ChessBoard::SetDefaultBoard(QSharedPointer<Player> p1, QSharedPointer<Playe
         board[0][5] = QSharedPointer<ChessPiece>(new Bishop("bishop_black"));
         board[0][6] = QSharedPointer<ChessPiece>(new Knight("knight_black"));
         board[0][7] = QSharedPointer<ChessPiece>(new Castle("castle_black"));
-        for (size_t i = 0; i < board_width; i++) {
+        for (size_t i = 0; i < m_cell_count; i++) {
             board[1][i] = QSharedPointer<ChessPiece>(new Pawn("pawn_black"));
         }
 
@@ -46,7 +46,7 @@ void ChessBoard::SetDefaultBoard(QSharedPointer<Player> p1, QSharedPointer<Playe
         board[7][5] = QSharedPointer<ChessPiece>(new Bishop("bishop_white"));
         board[7][6] = QSharedPointer<ChessPiece>(new Knight("knight_white"));
         board[7][7] = QSharedPointer<ChessPiece>(new Castle("castle_white"));
-        for (size_t i = 0; i < board_width; i++) {
+        for (size_t i = 0; i < m_cell_count; i++) {
             board[6][i] = QSharedPointer<ChessPiece>(new Pawn("pawn_white"));
         }
     }
@@ -59,7 +59,7 @@ void ChessBoard::SetDefaultBoard(QSharedPointer<Player> p1, QSharedPointer<Playe
         board[0][5] = QSharedPointer<ChessPiece>(new Bishop(p2));
         board[0][6] = QSharedPointer<ChessPiece>(new Knight(p2));
         board[0][7] = QSharedPointer<ChessPiece>(new Castle(p2));
-        for (size_t i = 0; i < board_width; i++) {
+        for (size_t i = 0; i < m_cell_count; i++) {
             board[1][i] = QSharedPointer<ChessPiece>(new Pawn(p2));
         }
 
@@ -71,14 +71,14 @@ void ChessBoard::SetDefaultBoard(QSharedPointer<Player> p1, QSharedPointer<Playe
         board[7][5] = QSharedPointer<ChessPiece>(new Bishop(p1));
         board[7][6] = QSharedPointer<ChessPiece>(new Knight(p1));
         board[7][7] = QSharedPointer<ChessPiece>(new Castle(p1));
-        for (size_t i = 0; i < board_width; i++) {
+        for (size_t i = 0; i < m_cell_count; i++) {
             board[6][i] = QSharedPointer<ChessPiece>(new Pawn(p1));
         }
     }
 }
 
 void ChessBoard::startGame(const QString& mode) {
-    is_started = true;
+    started = true;
 
     if (mode == "Offline")
         this->mode = Offline;
@@ -105,36 +105,33 @@ bool ChessBoard::isYourPiece(size_t posx, size_t posy) {
     return board[posy][posx]->GetPlayerInfo() != nullptr && board[posy][posx]->GetPlayerInfo()->IsYourTurn();
 }
 
-QList<QList<int>> ChessBoard::validMoves(size_t posx, size_t posy) {
-    if (!board[posy][posx]->GetPlayerInfo()->IsYourTurn())
+QList<QList<int>> ChessBoard::validMoves() {
+    if (!board[m_selected_y][m_selected_x]->GetPlayerInfo()->IsYourTurn())
         return QList<QList<int>>();
 
-    QList<QList<int>> moves = board[posy][posx]->Moves(board, posx, posy);
+    QList<QList<int>> moves = board[m_selected_y][m_selected_x]->Moves(board, m_selected_x, m_selected_y);
     QList<QList<int>> valid_moves;
-
-    piece_x = posx;
-    piece_y = posy;
 
     QSharedPointer<ChessPiece> piece_on_pos = nullptr;
     for (const QList<int>& move : moves) {
         int move_x = move[0];
         int move_y = move[1];
         piece_on_pos = board[move_y][move_x];
-        board[move_y][move_x] = board[posy][posx];
-        board[posy][posx] = nullptr;
+        board[move_y][move_x] = board[m_selected_y][m_selected_x];
+        board[m_selected_y][m_selected_x] = nullptr;
 
         if ((p1->IsYourTurn() && !IsCheck(p1)) || (p2->IsYourTurn() && !IsCheck(p2))) {
             valid_moves.push_back(move);
         }
 
-        board[posy][posx] = board[move_y][move_x];
+        board[m_selected_y][m_selected_x] = board[move_y][move_x];
         board[move_y][move_x] = piece_on_pos;
     }
 
     return valid_moves;
 }
 
-void ChessBoard::move(size_t posx, size_t posy) {
+void ChessBoard::move() {
     if (p1->IsYourTurn()) {
         p1->Move();
     }
@@ -142,16 +139,20 @@ void ChessBoard::move(size_t posx, size_t posy) {
         p2->Move();
     }
 
-    board[posy][posx] = board[piece_y][piece_x];
-    board[piece_y][piece_x] = nullptr;
-    if (dynamic_cast<Pawn*>(board[posy][posx].get())) {
-        dynamic_cast<Pawn*>(board[posy][posx].get())->SetMadeMove();
+    board[m_selected_y][m_selected_x] = board[m_selected_piece_y][m_selected_piece_x];
+    board[m_selected_piece_y][m_selected_piece_x] = nullptr;
+    if (dynamic_cast<Pawn*>(board[m_selected_y][m_selected_x].get())) {
+        dynamic_cast<Pawn*>(board[m_selected_y][m_selected_x].get())->SetMadeMove();
+    }
+
+    if (IsCheck(p1) || IsCheck(p2)) {
+        emit check();
     }
 }
 
 bool ChessBoard::IsCheck(QSharedPointer<Player> p) const {
-    for (size_t i = 0; i < board_width; i++) {
-        for (size_t j = 0; j < board_height; j++) {
+    for (size_t i = 0; i < m_cell_count; i++) {
+        for (size_t j = 0; j < m_cell_count; j++) {
             if (board[i][j] == nullptr || (board[i][j] != nullptr && board[i][j]->GetPlayerInfo() == p))
                 continue;
 
@@ -160,7 +161,7 @@ bool ChessBoard::IsCheck(QSharedPointer<Player> p) const {
                 int posx = move[0];
                 int posy = move[1];
 
-                if (dynamic_cast<King*>(board[posy][posx].get()) && board[posy][posx]->GetPlayerInfo() == p) {
+                if (dynamic_cast<King*>(board[posy][posx].get())) {
                     return true;
                 }
             }

@@ -13,8 +13,12 @@ Window {
     ChessBoard {
         id: boardLogic
         onGameStarted: {
+            gameMenu.visible = true;
             board.changePosition()
             board.requestPaint()
+        }
+        onCheck: {
+            gameMenu.declareCheck()
         }
     }
 
@@ -93,24 +97,13 @@ Window {
             Layout.preferredWidth: 300
             Layout.maximumWidth: 300
             color: "#272522"
-            Button {
-                id: playButton
-                text: "Play"
-                anchors.centerIn: parent
-                onClicked: {
-                    playButton.visible = false;
-                    mode.visible = false;
-                    boardLogic.startGame(mode.model[mode.currentIndex])
-                }
+            StartMenu {
+                id: startMenu
+                anchors.fill: parent
             }
-            ComboBox {
-                id: mode
-                currentIndex: 0
-                model: ["Offline", "Online", "Computer"]
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: playButton.top
-                anchors.bottomMargin: 20
-                width: 200
+            GameMenu {
+                id: gameMenu
+                anchors.fill: parent
             }
         }
     }
