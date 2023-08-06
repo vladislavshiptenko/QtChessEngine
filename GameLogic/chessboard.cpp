@@ -171,4 +171,20 @@ bool ChessBoard::IsCheck(QSharedPointer<Player> p) const {
     return false;
 }
 
+QString ChessBoard::GetChessBoardImage() const {
+    if (p1 == nullptr && p2 == nullptr) {
+        return chessboard_white_bottom;
+    }
+    else if (p1 == nullptr || p2 == nullptr) {
+        throw std::exception();
+    }
+
+    if ((p1->IsBottom() && p1->IsWhite()) || (p2->IsBottom() && p2->IsWhite())) {
+        return chessboard_white_bottom;
+    }
+    else {
+        return chessboard_black_bottom;
+    }
+}
+
 }

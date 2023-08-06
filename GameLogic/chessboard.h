@@ -19,6 +19,7 @@ class ChessBoard : public QObject {
     Q_PROPERTY(int selected_y READ SelectedY WRITE SetSelectedY)
     Q_PROPERTY(int selected_piece_x READ SelectedPieceX WRITE SetSelectedPieceX)
     Q_PROPERTY(int selected_piece_y READ SelectedPieceY WRITE SetSelectedPieceY)
+    Q_PROPERTY(QString chessboard_image READ GetChessBoardImage)
     Q_PROPERTY(int cell_count READ CellCount CONSTANT)
     QML_ELEMENT
 public:
@@ -30,17 +31,18 @@ public:
     Q_INVOKABLE void move();
     void SetDefaultBoard(QSharedPointer<Player> p1 = nullptr, QSharedPointer<Player> p2 = nullptr);
     bool IsCheck(QSharedPointer<Player> p) const;
-    bool Selected() const { return m_selected; }
+    bool Selected() const noexcept { return m_selected; }
     void SetSelected(bool new_selected_val) { m_selected = new_selected_val; }
-    int SelectedX() const { return m_selected_x; }
+    int SelectedX() const noexcept { return m_selected_x; }
     void SetSelectedX(int new_selected_x_val) { m_selected_x = new_selected_x_val; }
-    int SelectedY() const { return m_selected_y; }
+    int SelectedY() const noexcept { return m_selected_y; }
     void SetSelectedY(int new_selected_y_val) { m_selected_y = new_selected_y_val; }
-    int SelectedPieceX() const { return m_selected_piece_x; }
+    int SelectedPieceX() const noexcept { return m_selected_piece_x; }
     void SetSelectedPieceX(int new_selected_x_val) { m_selected_piece_x = new_selected_x_val; }
-    int SelectedPieceY() const { return m_selected_piece_y; }
+    int SelectedPieceY() const noexcept { return m_selected_piece_y; }
     void SetSelectedPieceY(int new_selected_y_val) { m_selected_piece_y = new_selected_y_val; }
-    int CellCount() const { return m_cell_count; }
+    int CellCount() const noexcept { return m_cell_count; }
+    QString GetChessBoardImage() const;
 
 signals:
     void gameStarted();
@@ -56,6 +58,8 @@ private:
     int m_selected_piece_x;
     int m_selected_piece_y;
     const int m_cell_count = 8;
+    QString chessboard_white_bottom = "qrc:/Assets/chessboard_white_bottom.png";
+    QString chessboard_black_bottom = "qrc:/Assets/chessboard_black_bottom.png";
     Mode mode;
     QSharedPointer<Player> p1 = nullptr;
     QSharedPointer<Player> p2 = nullptr;

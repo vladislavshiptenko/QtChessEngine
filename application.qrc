@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>Assets/icon.png</file>
-        <file>Assets/chessboard.png</file>
         <file>Assets/pawn_white.png</file>
         <file>Assets/bishop_white.png</file>
         <file>Assets/castle_white.png</file>
@@ -14,5 +13,7 @@
         <file>Assets/knight_black.png</file>
         <file>Assets/pawn_black.png</file>
         <file>Assets/queen_black.png</file>
+        <file>Assets/chessboard_white_bottom.png</file>
+        <file>Assets/chessboard_black_bottom.png</file>
     </qresource>
 </RCC>

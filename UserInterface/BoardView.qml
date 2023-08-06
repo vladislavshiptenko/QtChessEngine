@@ -32,7 +32,8 @@ Canvas {
 
     Component.onCompleted: {
         defaultInitialization()
-        loadImage("qrc:/Assets/chessboard.png")
+        loadImage("qrc:/Assets/chessboard_white_bottom.png")
+        loadImage("qrc:/Assets/chessboard_black_bottom.png")
         loadImage("qrc:/Assets/pawn_white.png")
         loadImage("qrc:/Assets/bishop_white.png")
         loadImage("qrc:/Assets/castle_white.png")
@@ -50,7 +51,7 @@ Canvas {
     onPaint: {
         var ctx = getContext("2d");
         ctx.reset();
-        ctx.drawImage("qrc:/Assets/chessboard.png", 0, 0, board.width, board.height);
+        ctx.drawImage(boardLogic.chessboard_image, 0, 0, board.width, board.height);
 
         if (boardLogic.selected) {
             ctx.fillStyle = "rgba(70, 130, 180, 0.5)";
