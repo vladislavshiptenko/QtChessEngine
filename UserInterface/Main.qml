@@ -17,9 +17,6 @@ Window {
             board.changePosition()
             board.requestPaint()
         }
-        onDeclareCheck: {
-            gameMenu.declareCheck()
-        }
     }
 
     GridLayout {
@@ -84,6 +81,8 @@ Window {
 
             Player {
                 id: p1
+                readonly property int indexPlayer: 0
+                name: "Kek"
                 anchors.top: parent.top
             }
             BoardView {
@@ -94,6 +93,8 @@ Window {
             }
             Player {
                 id: p2
+                readonly property int indexPlayer: 1
+                name: "Lol"
                 anchors.bottom: parent.bottom
             }
         }

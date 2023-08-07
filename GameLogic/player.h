@@ -17,6 +17,7 @@ public:
     bool isWhite() const noexcept;
     bool isYourTurn() const noexcept;
     bool isBottom() const noexcept;
+    void setBottom(bool isBottom);
 
 signals:
     void madeMove();

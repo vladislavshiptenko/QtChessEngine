@@ -3,7 +3,6 @@
 namespace qtchess {
 
 void Player::move() {
-    // change is_bottom and timer
     yourTurn = false;
 
     emit madeMove();
@@ -22,8 +21,11 @@ bool Player::isBottom() const noexcept {
 }
 
 void Player::setYourTurn() {
-    // change is_bottom and timer
     yourTurn = true;
+}
+
+void Player::setBottom(bool isBottom) {
+    bottom = isBottom;
 }
 
 }

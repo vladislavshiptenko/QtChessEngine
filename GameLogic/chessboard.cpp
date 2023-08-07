@@ -9,7 +9,7 @@
 
 namespace qtchess {
 
-ChessBoard::ChessBoard()
+ChessBoard::ChessBoard() : players(QList<QSharedPointer<Player>>(countPlayers, nullptr))
 {
     for (size_t i = 0; i < mCellCount; i++) {
         for (size_t j = 0; j < mCellCount; j++) {
@@ -26,9 +26,9 @@ QString ChessBoard::getImage(size_t posX, size_t posY)
     return board[posY][posX]->getImageSource();
 }
 
-void ChessBoard::setDefaultBoard(QSharedPointer<Player> p1, QSharedPointer<Player> p2)
+void ChessBoard::setDefaultBoard(QSharedPointer<Player> pBottom, QSharedPointer<Player> pTop)
 {
-    if (p1 == nullptr || p2 == nullptr) {
+    if (players[0] == nullptr && players[0] == nullptr) {
         board[0][0] = QSharedPointer<ChessPiece>(new Castle("castle_black"));
         board[0][1] = QSharedPointer<ChessPiece>(new Knight("knight_black"));
         board[0][2] = QSharedPointer<ChessPiece>(new Bishop("bishop_black"));
@@ -52,29 +52,31 @@ void ChessBoard::setDefaultBoard(QSharedPointer<Player> p1, QSharedPointer<Playe
         for (size_t i = 0; i < mCellCount; i++) {
             board[6][i] = QSharedPointer<ChessPiece>(new Pawn("pawn_white"));
         }
+    } else if (players[0] == nullptr || players[1] == nullptr) {
+        throw std::exception();
     } else {
-        board[0][0] = QSharedPointer<ChessPiece>(new Castle(p2));
-        board[0][1] = QSharedPointer<ChessPiece>(new Knight(p2));
-        board[0][2] = QSharedPointer<ChessPiece>(new Bishop(p2));
-        board[0][3] = QSharedPointer<ChessPiece>(new Queen(p2));
-        board[0][4] = QSharedPointer<ChessPiece>(new King(p2));
-        board[0][5] = QSharedPointer<ChessPiece>(new Bishop(p2));
-        board[0][6] = QSharedPointer<ChessPiece>(new Knight(p2));
-        board[0][7] = QSharedPointer<ChessPiece>(new Castle(p2));
+        board[0][0] = QSharedPointer<ChessPiece>(new Castle(pTop));
+        board[0][1] = QSharedPointer<ChessPiece>(new Knight(pTop));
+        board[0][2] = QSharedPointer<ChessPiece>(new Bishop(pTop));
+        board[0][3] = QSharedPointer<ChessPiece>(new Queen(pTop));
+        board[0][4] = QSharedPointer<ChessPiece>(new King(pTop));
+        board[0][5] = QSharedPointer<ChessPiece>(new Bishop(pTop));
+        board[0][6] = QSharedPointer<ChessPiece>(new Knight(pTop));
+        board[0][7] = QSharedPointer<ChessPiece>(new Castle(pTop));
         for (size_t i = 0; i < mCellCount; i++) {
-            board[1][i] = QSharedPointer<ChessPiece>(new Pawn(p2));
+            board[1][i] = QSharedPointer<ChessPiece>(new Pawn(pTop));
         }
 
-        board[7][0] = QSharedPointer<ChessPiece>(new Castle(p1));
-        board[7][1] = QSharedPointer<ChessPiece>(new Knight(p1));
-        board[7][2] = QSharedPointer<ChessPiece>(new Bishop(p1));
-        board[7][3] = QSharedPointer<ChessPiece>(new Queen(p1));
-        board[7][4] = QSharedPointer<ChessPiece>(new King(p1));
-        board[7][5] = QSharedPointer<ChessPiece>(new Bishop(p1));
-        board[7][6] = QSharedPointer<ChessPiece>(new Knight(p1));
-        board[7][7] = QSharedPointer<ChessPiece>(new Castle(p1));
+        board[7][0] = QSharedPointer<ChessPiece>(new Castle(pBottom));
+        board[7][1] = QSharedPointer<ChessPiece>(new Knight(pBottom));
+        board[7][2] = QSharedPointer<ChessPiece>(new Bishop(pBottom));
+        board[7][3] = QSharedPointer<ChessPiece>(new Queen(pBottom));
+        board[7][4] = QSharedPointer<ChessPiece>(new King(pBottom));
+        board[7][5] = QSharedPointer<ChessPiece>(new Bishop(pBottom));
+        board[7][6] = QSharedPointer<ChessPiece>(new Knight(pBottom));
+        board[7][7] = QSharedPointer<ChessPiece>(new Castle(pBottom));
         for (size_t i = 0; i < mCellCount; i++) {
-            board[6][i] = QSharedPointer<ChessPiece>(new Pawn(p1));
+            board[6][i] = QSharedPointer<ChessPiece>(new Pawn(pBottom));
         }
     }
 }
@@ -94,11 +96,20 @@ void ChessBoard::startGame(const QString& mode)
     }
 
     bool is_white = QRandomGenerator::global()->generate() % 2;
-    p1 = QSharedPointer<Player>(new Player(is_white, is_white, true));
-    p2 = QSharedPointer<Player>(new Player(!is_white, !is_white, false));
-    setDefaultBoard(p1, p2);
-    connect(p1.get(), &Player::madeMove, p2.get(), &Player::setYourTurn);
-    connect(p2.get(), &Player::madeMove, p1.get(), &Player::setYourTurn);
+    players[0] = QSharedPointer<Player>(new Player(is_white, is_white, is_white));
+    players[1] = QSharedPointer<Player>(new Player(!is_white, !is_white, !is_white));
+    if (players[0]->isWhite())
+        mCurrentPlayerIndex = 0;
+    else
+        mCurrentPlayerIndex = 1;
+
+    if (players[0]->isBottom()) {
+        setDefaultBoard(players[0], players[1]);
+    } else {
+        setDefaultBoard(players[1], players[0]);
+    }
+    connect(players[0].get(), &Player::madeMove, players[1].get(), &Player::setYourTurn);
+    connect(players[1].get(), &Player::madeMove, players[0].get(), &Player::setYourTurn);
 
     emit gameStarted();
 }
@@ -126,7 +137,7 @@ QList<QList<int>> ChessBoard::validMoves()
         board[moveY][moveX] = board[mSelectedY][mSelectedX];
         board[mSelectedY][mSelectedX] = nullptr;
 
-        if ((p1->isYourTurn() && !isCheck(p1)) || (p2->isYourTurn() && !isCheck(p2))) {
+        if (!isCheck(players[mCurrentPlayerIndex])) {
             validMoves.push_back(move);
         }
 
@@ -138,11 +149,8 @@ QList<QList<int>> ChessBoard::validMoves()
 }
 
 void ChessBoard::move() {
-    if (p1->isYourTurn()) {
-        p1->move();
-    } else {
-        p2->move();
-    }
+    players[mCurrentPlayerIndex]->move();
+    mCurrentPlayerIndex = (mCurrentPlayerIndex + 1) % countPlayers;
 
     board[mSelectedY][mSelectedX] = board[mSelectedPieceY][mSelectedPieceX];
     board[mSelectedPieceY][mSelectedPieceX] = nullptr;
@@ -150,9 +158,15 @@ void ChessBoard::move() {
         dynamic_cast<Pawn*>(board[mSelectedY][mSelectedX].get())->setMadeMove();
     }
 
-    if (isCheck(p1) || isCheck(p2)) {
-        emit declareCheck();
+    if (mode == Offline) {
+        bool tmp = players[1]->isBottom();
+        players[1]->setBottom(players[0]->isBottom());
+        players[0]->setBottom(tmp);
+        flipBoard();
     }
+
+    mCheck = isCheck(players[mCurrentPlayerIndex]);
+    setCheckPos(players[mCurrentPlayerIndex]);
 }
 
 bool ChessBoard::isCheck(QSharedPointer<Player> p) const
@@ -179,16 +193,50 @@ bool ChessBoard::isCheck(QSharedPointer<Player> p) const
 
 QString ChessBoard::getChessBoardImage() const
 {
-    if (p1 == nullptr && p2 == nullptr) {
+    if (players[0] == nullptr && players[0] == nullptr) {
         return chessBoardWhiteBottom;
-    } else if (p1 == nullptr || p2 == nullptr) {
+    } else if (players[0] == nullptr || players[0] == nullptr) {
         throw std::exception();
     }
 
-    if ((p1->isBottom() && p1->isWhite()) || (p2->isBottom() && p2->isWhite())) {
+    if ((players[0]->isBottom() && players[0]->isWhite()) || (players[1]->isBottom() && players[1]->isWhite())) {
         return chessBoardWhiteBottom;
     } else {
         return chessboardBlackBottom;
+    }
+}
+
+void ChessBoard::flipBoard()
+{
+    for (size_t i = 0; i < mCellCount; i++) {
+        for (size_t j = 0; j < mCellCount - i - 1; j++) {
+            std::swap(board[i][j], board[mCellCount - i - 1][mCellCount - j - 1]);
+        }
+    }
+
+    for (size_t i = 0; i < mCellCount / 2; i++) {
+        std::swap(board[mCellCount - i - 1][i], board[i][mCellCount - i - 1]);
+    }
+}
+
+void ChessBoard::setCheckPos(QSharedPointer<Player> p) {
+    for (size_t i = 0; i < mCellCount; i++) {
+        for (size_t j = 0; j < mCellCount; j++) {
+            if (board[i][j] == nullptr || (board[i][j] != nullptr && board[i][j]->getPlayerInfo() == p))
+                continue;
+
+            QList<QList<int>> piece_move = board[i][j]->moves(board, j, i);
+            for (const QList<int>& move : piece_move) {
+                int posX = move[0];
+                int posY = move[1];
+
+                if (dynamic_cast<King*>(board[posY][posX].get())) {
+                    mCheckPosX = posX;
+                    mCheckPosY = posY;
+                    return;
+                }
+            }
+        }
     }
 }
 

@@ -55,8 +55,7 @@ Canvas {
 
         if (boardLogic.selected) {
             ctx.fillStyle = "rgba(70, 130, 180, 0.5)";
-            ctx.rect(boardLogic.selectedX * cellLength, boardLogic.selectedY * cellLength, cellLength + 1, cellLength + 1);
-            ctx.fill();
+            ctx.fillRect(boardLogic.selectedX * cellLength, boardLogic.selectedY * cellLength, cellLength + 1, cellLength + 1);
             for (var i = 0; i < possibleMoves.length; i++) {
                 var posX = possibleMoves[i][0];
                 var posY = possibleMoves[i][1];
@@ -69,6 +68,11 @@ Canvas {
                 }
                 ctx.fill();
             }
+        }
+
+        if (boardLogic.check) {
+            ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+            ctx.fillRect(boardLogic.checkPosX * cellLength, boardLogic.checkPosY * cellLength, cellLength + 1, cellLength + 1);
         }
 
         for (i = 0; i < boardLogic.cellCount; i++) {
@@ -92,8 +96,8 @@ Canvas {
             else {
                 if (boardLogic.selected && isFind([boardLogic.selectedX, boardLogic.selectedY])) {
                     boardLogic.move();
-                    pieces[boardLogic.selectedY][boardLogic.selectedX] = pieces[boardLogic.selectedPieceY][boardLogic.selectedPieceX]
-                    pieces[boardLogic.selectedPieceY][boardLogic.selectedPieceX] = ""
+                    gameMenu.declareCheck(boardLogic.check);
+                    changePosition();
                 }
 
                 boardLogic.selected = false;

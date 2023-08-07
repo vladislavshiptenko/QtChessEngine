@@ -20,6 +20,9 @@ class ChessBoard : public QObject {
     Q_PROPERTY(int selectedPieceX READ getSelectedPieceX WRITE setSelectedPieceX)
     Q_PROPERTY(int selectedPieceY READ getSelectedPieceY WRITE setSelectedPieceY)
     Q_PROPERTY(QString chessBoardImage READ getChessBoardImage)
+    Q_PROPERTY(bool check READ getCheck)
+    Q_PROPERTY(int checkPosX READ getCheckPosX)
+    Q_PROPERTY(int checkPosY READ getCheckPosY)
     Q_PROPERTY(int cellCount READ getCellCount CONSTANT)
     QML_ELEMENT
 public:
@@ -29,7 +32,7 @@ public:
     Q_INVOKABLE bool isYourPiece(size_t posX, size_t posY);
     Q_INVOKABLE QList<QList<int>> validMoves();
     Q_INVOKABLE void move();
-    void setDefaultBoard(QSharedPointer<Player> p1 = nullptr, QSharedPointer<Player> p2 = nullptr);
+    void setDefaultBoard(QSharedPointer<Player> pBottom = nullptr, QSharedPointer<Player> pTop = nullptr);
     bool isCheck(QSharedPointer<Player> p) const;
     bool getSelected() const noexcept
     {
@@ -75,28 +78,47 @@ public:
     {
         return mCellCount;
     }
+    int getCheckPosX() const noexcept
+    {
+        return mCheckPosX;
+    }
+    int getCheckPosY() const noexcept
+    {
+        return mCheckPosY;
+    }
+    int getCheck() const noexcept
+    {
+        return mCheck;
+    }
     QString getChessBoardImage() const;
 
 signals:
     void gameStarted();
-    void declareCheck();
+    void declareStalemate();
+    void declareCheckmate();
 
 private:
     bool started = false;
-    bool check = false;
     bool isCheckmate = false;
     bool mSelected = false;
     int mSelectedX = 0;
     int mSelectedY = 0;
     int mSelectedPieceX = 0;
     int mSelectedPieceY = 0;
+    bool mCheck = false;
+    int mCheckPosX = 0;
+    int mCheckPosY = 0;
+    int mCurrentPlayerIndex = 0;
     const int mCellCount = 8;
     QString chessBoardWhiteBottom = "qrc:/Assets/chessboard_white_bottom.png";
     QString chessboardBlackBottom = "qrc:/Assets/chessboard_black_bottom.png";
     Mode mode;
-    QSharedPointer<Player> p1 = nullptr;
-    QSharedPointer<Player> p2 = nullptr;
+    const int countPlayers = 2;
+    QList<QSharedPointer<Player>> players;
     QSharedPointer<ChessPiece> board[8][8];
+
+    void flipBoard();
+    void setCheckPos(QSharedPointer<Player> p);
 };
 
 }
