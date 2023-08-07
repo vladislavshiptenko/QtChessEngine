@@ -2,29 +2,35 @@
 
 namespace qtchess {
 
-void Player::move() {
+void Player::move()
+{
     yourTurn = false;
 
     emit madeMove();
 }
 
-bool Player::isWhite() const noexcept {
+bool Player::isWhite() const noexcept
+{
     return white;
 }
 
-bool Player::isYourTurn() const noexcept {
+bool Player::isYourTurn() const noexcept
+{
     return yourTurn;
 }
 
-bool Player::isBottom() const noexcept {
+bool Player::isBottom() const noexcept
+{
     return bottom;
 }
 
-void Player::setYourTurn() {
+void Player::setYourTurn()
+{
     yourTurn = true;
 }
 
-void Player::setBottom(bool isBottom) {
+void Player::setBottom(bool isBottom)
+{
     bottom = isBottom;
 }
 

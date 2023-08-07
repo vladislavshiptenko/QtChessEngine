@@ -6,6 +6,14 @@ Item {
     width: board.width
     height: (parent.height - board.height) / 2
 
+    function stopTimer() {
+        elapsedTimer.stop()
+    }
+
+    function runTimer() {
+        elapsedTimer.start()
+    }
+
     Text {
         anchors.left: parent.left
         text: name
@@ -23,11 +31,32 @@ Item {
         color: "#989795"
 
         Text {
-            text: parseInt(timer / 60) + ":" + timer % 60
+            text: getTime()
             property int timer: 10 * 60
             anchors.centerIn: parent
             color: "#2b2722"
             font.pixelSize: 25
+
+            function getTime() {
+                if (timer / 3600 < 1) {
+                    var minutes = timer / 60;
+                    var seconds = timer % 60;
+                    if (seconds < 10)
+                        seconds = "0" + seconds;
+
+                    return parseInt(minutes) + ":" + seconds;
+                } else {
+                    var hours = parseInt(timer / 3600);
+                    minutes = parseInt(timer / 60) % 60;
+                    if (minutes < 10)
+                        minutes = "0" + minutes;
+                    seconds = timer % 60;
+                    if (seconds < 10)
+                        seconds = "0" + seconds;
+
+                    return parseInt(hours) + ":" + minutes + ":" + seconds;
+                }
+            }
 
             Timer {
                 id: elapsedTimer
@@ -36,10 +65,6 @@ Item {
                     parent.timer = parent.timer - 1
                     restart()
                 }
-            }
-
-            Component.onCompleted: {
-                elapsedTimer.start()
             }
         }
     }

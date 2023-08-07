@@ -98,10 +98,13 @@ void ChessBoard::startGame(const QString& mode)
     bool is_white = QRandomGenerator::global()->generate() % 2;
     players[0] = QSharedPointer<Player>(new Player(is_white, is_white, is_white));
     players[1] = QSharedPointer<Player>(new Player(!is_white, !is_white, !is_white));
-    if (players[0]->isWhite())
+    if (players[0]->isWhite()) {
         mCurrentPlayerIndex = 0;
-    else
+        mYourPlayerIndex = 0;
+    } else {
         mCurrentPlayerIndex = 1;
+        mYourPlayerIndex = 1;
+    }
 
     if (players[0]->isBottom()) {
         setDefaultBoard(players[0], players[1]);
@@ -162,11 +165,14 @@ void ChessBoard::move() {
         bool tmp = players[1]->isBottom();
         players[1]->setBottom(players[0]->isBottom());
         players[0]->setBottom(tmp);
+        mYourPlayerIndex = (mYourPlayerIndex + 1) % 2;
         flipBoard();
     }
 
     mCheck = isCheck(players[mCurrentPlayerIndex]);
     setCheckPos(players[mCurrentPlayerIndex]);
+
+    emit moved();
 }
 
 bool ChessBoard::isCheck(QSharedPointer<Player> p) const

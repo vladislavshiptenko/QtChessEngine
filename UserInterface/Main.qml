@@ -14,8 +14,12 @@ Window {
         id: boardLogic
         onGameStarted: {
             gameMenu.visible = true;
-            board.changePosition()
-            board.requestPaint()
+            gamePlayMenu.setPlayers();
+            board.changePosition();
+            board.requestPaint();
+        }
+        onMoved: {
+            gamePlayMenu.setPlayers();
         }
     }
 
@@ -73,9 +77,21 @@ Window {
             }
         }
         Rectangle {
+            id: gamePlayMenu
+
+            property var players: [p1, p2]
             Layout.column: 1
             Layout.fillHeight: true
             Layout.fillWidth: true
+
+            function setPlayers() {
+                gamePlayMenu.players[boardLogic.currentPlayerIndex].runTimer();
+                gamePlayMenu.players[(boardLogic.currentPlayerIndex + 1) % 2].stopTimer();
+                players[boardLogic.yourPlayerIndex].anchors.bottom = gamePlayMenu.bottom;
+                players[boardLogic.yourPlayerIndex].anchors.top = board.bottom;
+                players[(boardLogic.yourPlayerIndex + 1) % 2].anchors.top = gamePlayMenu.top;
+                players[(boardLogic.yourPlayerIndex + 1) % 2].anchors.bottom = board.top;
+            }
 
             color: "#312e2b"
 

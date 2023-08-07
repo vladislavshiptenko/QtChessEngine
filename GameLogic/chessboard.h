@@ -23,6 +23,8 @@ class ChessBoard : public QObject {
     Q_PROPERTY(bool check READ getCheck)
     Q_PROPERTY(int checkPosX READ getCheckPosX)
     Q_PROPERTY(int checkPosY READ getCheckPosY)
+    Q_PROPERTY(int currentPlayerIndex READ getCurrentPlayerIndex)
+    Q_PROPERTY(int yourPlayerIndex READ getYourPlayerIndex)
     Q_PROPERTY(int cellCount READ getCellCount CONSTANT)
     QML_ELEMENT
 public:
@@ -90,12 +92,21 @@ public:
     {
         return mCheck;
     }
+    int getCurrentPlayerIndex() const noexcept
+    {
+        return mCurrentPlayerIndex;
+    }
+    int getYourPlayerIndex() const noexcept
+    {
+        return mYourPlayerIndex;
+    }
     QString getChessBoardImage() const;
 
 signals:
     void gameStarted();
     void declareStalemate();
     void declareCheckmate();
+    void moved();
 
 private:
     bool started = false;
@@ -109,6 +120,7 @@ private:
     int mCheckPosX = 0;
     int mCheckPosY = 0;
     int mCurrentPlayerIndex = 0;
+    int mYourPlayerIndex = 0;
     const int mCellCount = 8;
     QString chessBoardWhiteBottom = "qrc:/Assets/chessboard_white_bottom.png";
     QString chessboardBlackBottom = "qrc:/Assets/chessboard_black_bottom.png";
