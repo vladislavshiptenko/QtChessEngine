@@ -2,29 +2,29 @@ import QtQuick
 
 Canvas {
     property var pieces: []
-    property var possible_moves: []
-    property real cell_length: width / boardLogic.cell_count
+    property var possibleMoves: []
+    property real cellLength: width / boardLogic.cellCount
 
     function defaultInitialization() {
-        for (var i = 0; i < boardLogic.cell_count; i++) {
+        for (var i = 0; i < boardLogic.cellCount; i++) {
             board.pieces.push([]);
-            for (var j = 0; j < boardLogic.cell_count; j++) {
+            for (var j = 0; j < boardLogic.cellCount; j++) {
                 board.pieces[i].push(boardLogic.getImage(j, i));
             }
         }
     }
 
     function changePosition() {
-        for (var i = 0; i < boardLogic.cell_count; i++) {
-            for (var j = 0; j < boardLogic.cell_count; j++) {
+        for (var i = 0; i < boardLogic.cellCount; i++) {
+            for (var j = 0; j < boardLogic.cellCount; j++) {
                 board.pieces[i][j] = boardLogic.getImage(j, i);
             }
         }
     }
 
     function isFind(move) {
-        for (var i = 0; i < possible_moves.length; i++) {
-            if (possible_moves[i][0] - 0 % 1 === move[0] - 0 % 1 && possible_moves[i][1] - 0 % 1 === move[1] - 0 % 1)
+        for (var i = 0; i < possibleMoves.length; i++) {
+            if (possibleMoves[i][0] - 0 % 1 === move[0] - 0 % 1 && possibleMoves[i][1] - 0 % 1 === move[1] - 0 % 1)
                 return true;
         }
         return false;
@@ -51,31 +51,31 @@ Canvas {
     onPaint: {
         var ctx = getContext("2d");
         ctx.reset();
-        ctx.drawImage(boardLogic.chessboard_image, 0, 0, board.width, board.height);
+        ctx.drawImage(boardLogic.chessBoardImage, 0, 0, board.width, board.height);
 
         if (boardLogic.selected) {
             ctx.fillStyle = "rgba(70, 130, 180, 0.5)";
-            ctx.rect(boardLogic.selected_x * cell_length, boardLogic.selected_y * cell_length, cell_length + 1, cell_length + 1);
+            ctx.rect(boardLogic.selectedX * cellLength, boardLogic.selectedY * cellLength, cellLength + 1, cellLength + 1);
             ctx.fill();
-            for (var i = 0; i < possible_moves.length; i++) {
-                var posx = possible_moves[i][0];
-                var posy = possible_moves[i][1];
-                if (board.pieces[posy][posx] === "") {
+            for (var i = 0; i < possibleMoves.length; i++) {
+                var posX = possibleMoves[i][0];
+                var posY = possibleMoves[i][1];
+                if (board.pieces[posY][posX] === "") {
                     ctx.beginPath();
-                    ctx.arc(posx * cell_length + cell_length / 2, posy * cell_length + cell_length / 2, 15, 0, 2 * Math.PI);
+                    ctx.arc(posX * cellLength + cellLength / 2, posY * cellLength + cellLength / 2, 15, 0, 2 * Math.PI);
                 }
                 else {
-                    ctx.rect(posx * cell_length, posy * cell_length, cell_length + 1, cell_length + 1);
+                    ctx.rect(posX * cellLength, posY * cellLength, cellLength + 1, cellLength + 1);
                 }
                 ctx.fill();
             }
         }
 
-        for (i = 0; i < boardLogic.cell_count; i++) {
-            for (var j = 0; j < boardLogic.cell_count; j++) {
+        for (i = 0; i < boardLogic.cellCount; i++) {
+            for (var j = 0; j < boardLogic.cellCount; j++) {
                 if (board.pieces[i][j] === "")
                     continue;
-                ctx.drawImage(board.pieces[i][j], j * cell_length, i * cell_length, cell_length, cell_length);
+                ctx.drawImage(board.pieces[i][j], j * cellLength, i * cellLength, cellLength, cellLength);
             }
         }
     }
@@ -83,25 +83,25 @@ Canvas {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            boardLogic.selected_x = Math.floor(mouseX / cell_length);
-            boardLogic.selected_y = Math.floor(mouseY / cell_length);
-            if (boardLogic.isYourPiece(boardLogic.selected_x, boardLogic.selected_y)) {
-                parent.possible_moves = boardLogic.validMoves();
+            boardLogic.selectedX = Math.floor(mouseX / cellLength);
+            boardLogic.selectedY = Math.floor(mouseY / cellLength);
+            if (boardLogic.isYourPiece(boardLogic.selectedX, boardLogic.selectedY)) {
+                parent.possibleMoves = boardLogic.validMoves();
                 boardLogic.selected = true;
             }
             else {
-                if (boardLogic.selected && isFind([boardLogic.selected_x, boardLogic.selected_y])) {
+                if (boardLogic.selected && isFind([boardLogic.selectedX, boardLogic.selectedY])) {
                     boardLogic.move();
-                    pieces[boardLogic.selected_y][boardLogic.selected_x] = pieces[boardLogic.selected_piece_y][boardLogic.selected_piece_x]
-                    pieces[boardLogic.selected_piece_y][boardLogic.selected_piece_x] = ""
+                    pieces[boardLogic.selectedY][boardLogic.selectedX] = pieces[boardLogic.selectedPieceY][boardLogic.selectedPieceX]
+                    pieces[boardLogic.selectedPieceY][boardLogic.selectedPieceX] = ""
                 }
 
                 boardLogic.selected = false;
-                parent.possible_moves = [];
+                parent.possibleMoves = [];
             }
 
-            boardLogic.selected_piece_x = boardLogic.selected_x
-            boardLogic.selected_piece_y = boardLogic.selected_y
+            boardLogic.selectedPieceX = boardLogic.selectedX
+            boardLogic.selectedPieceY = boardLogic.selectedY
             parent.requestPaint();
         }
     }

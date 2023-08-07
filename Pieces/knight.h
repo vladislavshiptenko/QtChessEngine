@@ -6,17 +6,20 @@ namespace qtchess {
 
 class Knight : public ChessPiece {
 public:
-    Knight(QString image_name) {
-        this->image_name = image_name + ".png";
+    Knight(QString imageName)
+    {
+        this->imageName = imageName + ".png";
     }
-    Knight(QSharedPointer<const Player> player) : ChessPiece(player) {
-        piece_name = "knight_";
-        if (this->player->IsWhite())
-            this->image_name = piece_name + white_piece_name + ".png";
-        else
-            this->image_name = piece_name + black_piece_name + ".png";
+    Knight(QSharedPointer<const Player> player) : ChessPiece(player)
+    {
+        pieceName = "knight_";
+        if (this->player->isWhite()) {
+            this->imageName = pieceName + whitePieceName + ".png";
+        } else {
+            this->imageName = pieceName + blackPieceName + ".png";
+        }
     }
-    QList<QList<int>> Moves(const QSharedPointer<ChessPiece> board[][8], int posx, int posy) override;
+    QList<QList<int>> moves(const QSharedPointer<ChessPiece> board[][8], int posX, int posY) override;
 };
 
 }

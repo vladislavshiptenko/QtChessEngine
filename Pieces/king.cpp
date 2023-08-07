@@ -2,32 +2,33 @@
 
 namespace qtchess {
 
-QList<QList<int>> King::Moves(const QSharedPointer<ChessPiece> board[][8], int posx, int posy) {
+QList<QList<int>> King::moves(const QSharedPointer<ChessPiece> board[][8], int posX, int posY)
+{
     QList<QList<int>> moves;
 
-    if (posx - 1 >= 0) {
-        PushValidMove(board, moves, {posx - 1, posy}, posx, posy);
+    if (posX - 1 >= 0) {
+        pushValidMove(board, moves, {posX - 1, posY}, posX, posY);
     }
-    if (posx + 1 < 8) {
-        PushValidMove(board, moves, {posx + 1, posy}, posx, posy);
+    if (posX + 1 < 8) {
+        pushValidMove(board, moves, {posX + 1, posY}, posX, posY);
     }
-    if (posy - 1 >= 0) {
-        PushValidMove(board, moves, {posx, posy - 1}, posx, posy);
+    if (posY - 1 >= 0) {
+        pushValidMove(board, moves, {posX, posY - 1}, posX, posY);
     }
-    if (posy + 1 < 8) {
-        PushValidMove(board, moves, {posx, posy + 1}, posx, posy);
+    if (posY + 1 < 8) {
+        pushValidMove(board, moves, {posX, posY + 1}, posX, posY);
     }
-    if (posx - 1 >= 0  && posy - 1 >= 0) {
-        PushValidMove(board, moves, {posx - 1, posy - 1}, posx, posy);
+    if (posX - 1 >= 0  && posY - 1 >= 0) {
+        pushValidMove(board, moves, {posX - 1, posY - 1}, posX, posY);
     }
-    if (posx - 1 >= 0 && posy + 1 < 8) {
-        PushValidMove(board, moves, {posx - 1, posy + 1}, posx, posy);
+    if (posX - 1 >= 0 && posY + 1 < 8) {
+        pushValidMove(board, moves, {posX - 1, posY + 1}, posX, posY);
     }
-    if (posx + 1 < 8 && posy - 1 >= 0) {
-        PushValidMove(board, moves, {posx + 1, posy - 1}, posx, posy);
+    if (posX + 1 < 8 && posY - 1 >= 0) {
+        pushValidMove(board, moves, {posX + 1, posY - 1}, posX, posY);
     }
-    if (posx + 1 < 8 && posy + 1 < 8) {
-        PushValidMove(board, moves, {posx + 1, posy + 1}, posx, posy);
+    if (posX + 1 < 8 && posY + 1 < 8) {
+        pushValidMove(board, moves, {posX + 1, posY + 1}, posX, posY);
     }
 
     return moves;

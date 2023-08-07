@@ -17,7 +17,7 @@ Window {
             board.changePosition()
             board.requestPaint()
         }
-        onCheck: {
+        onDeclareCheck: {
             gameMenu.declareCheck()
         }
     }

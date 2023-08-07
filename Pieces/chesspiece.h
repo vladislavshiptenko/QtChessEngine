@@ -9,18 +9,25 @@ namespace qtchess {
 
 class ChessPiece {
 public:
-    ChessPiece(QSharedPointer<const Player> player = nullptr) : player(player)  { }
-    virtual QList<QList<int>> Moves(const QSharedPointer<ChessPiece> board[][8], int posx, int posy) = 0;
-    QString GetImageSource() const noexcept { return path + image_name; }
-    QSharedPointer<const Player> GetPlayerInfo() const noexcept { return player; }
+    ChessPiece(QSharedPointer<const Player> player = nullptr) : player(player)
+    {}
+    virtual QList<QList<int>> moves(const QSharedPointer<ChessPiece> board[][8], int posX, int posY) = 0;
+    QString getImageSource() const noexcept
+    {
+        return path + imageName;
+    }
+    QSharedPointer<const Player> getPlayerInfo() const noexcept
+    {
+        return player;
+    }
 
 protected:
-    QString black_piece_name = "black";
-    QString white_piece_name = "white";
-    QString piece_name;
-    QString image_name;
+    QString blackPieceName = "black";
+    QString whitePieceName = "white";
+    QString pieceName;
+    QString imageName;
     QSharedPointer<const Player> player;
-    bool PushValidMove(const QSharedPointer<ChessPiece> board[][8], QList<QList<int>>& moves, const QList<int>& move, int posx, int posy);
+    bool pushValidMove(const QSharedPointer<ChessPiece> board[][8], QList<QList<int>>& moves, const QList<int>& move, int posX, int posY);
 
 private:
     QString path = "qrc:/Assets/";
