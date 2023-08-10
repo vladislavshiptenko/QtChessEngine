@@ -21,6 +21,7 @@ class ChessBoard : public QObject {
     Q_PROPERTY(int selectedPieceY READ getSelectedPieceY WRITE setSelectedPieceY)
     Q_PROPERTY(QString chessBoardImage READ getChessBoardImage)
     Q_PROPERTY(bool check READ getCheck)
+    Q_PROPERTY(bool stalemate READ getStalemate)
     Q_PROPERTY(int checkPosX READ getCheckPosX)
     Q_PROPERTY(int checkPosY READ getCheckPosY)
     Q_PROPERTY(int currentPlayerIndex READ getCurrentPlayerIndex)
@@ -32,10 +33,11 @@ public:
     Q_INVOKABLE void startGame(const QString& mode);
     Q_INVOKABLE QString getImage(size_t posX, size_t posY);
     Q_INVOKABLE bool isYourPiece(size_t posX, size_t posY);
-    Q_INVOKABLE QList<QList<int>> validMoves();
+    Q_INVOKABLE QList<QList<int>> validMoves(size_t posX, size_t posY) const;
     Q_INVOKABLE void move();
-    void setDefaultBoard(QSharedPointer<Player> pBottom = nullptr, QSharedPointer<Player> pTop = nullptr);
-    bool isCheck(QSharedPointer<Player> p) const;
+    void setDefaultBoard(QSharedPointer<const Player> pBottom = nullptr, QSharedPointer<const Player> pTop = nullptr);
+    bool isCheck(QSharedPointer<Player> p, const QSharedPointer<ChessPiece> copyBoard[][8]) const;
+    bool isStalemate(QSharedPointer<Player> p, const QSharedPointer<ChessPiece> copyBoard[][8]) const;
     bool getSelected() const noexcept
     {
         return mSelected;
@@ -100,6 +102,11 @@ public:
     {
         return mYourPlayerIndex;
     }
+    bool getStalemate() const noexcept
+    {
+        return mStalemate;
+    }
+    void gameOver();
     QString getChessBoardImage() const;
 
 signals:
@@ -110,7 +117,7 @@ signals:
 
 private:
     bool started = false;
-    bool isCheckmate = false;
+    bool mStalemate = false;
     bool mSelected = false;
     int mSelectedX = 0;
     int mSelectedY = 0;

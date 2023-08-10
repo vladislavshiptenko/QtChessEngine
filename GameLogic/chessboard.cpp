@@ -26,7 +26,7 @@ QString ChessBoard::getImage(size_t posX, size_t posY)
     return board[posY][posX]->getImageSource();
 }
 
-void ChessBoard::setDefaultBoard(QSharedPointer<Player> pBottom, QSharedPointer<Player> pTop)
+void ChessBoard::setDefaultBoard(QSharedPointer<const Player> pBottom, QSharedPointer<const Player> pTop)
 {
     if (players[0] == nullptr && players[0] == nullptr) {
         board[0][0] = QSharedPointer<ChessPiece>(new Castle("castle_black"));
@@ -124,28 +124,34 @@ bool ChessBoard::isYourPiece(size_t posX, size_t posY)
     return board[posY][posX]->getPlayerInfo() != nullptr && board[posY][posX]->getPlayerInfo()->isYourTurn();
 }
 
-QList<QList<int>> ChessBoard::validMoves()
+QList<QList<int>> ChessBoard::validMoves(size_t posX, size_t posY) const
 {
-    if (!board[mSelectedY][mSelectedX]->getPlayerInfo()->isYourTurn())
+    if (!board[posY][posX]->getPlayerInfo()->isYourTurn())
         return QList<QList<int>>();
 
-    QList<QList<int>> moves = board[mSelectedY][mSelectedX]->moves(board, mSelectedX, mSelectedY);
+    QSharedPointer<ChessPiece> copyBoard[8][8];
+    for (size_t i = 0; i < mCellCount; i++) {
+        for (size_t j = 0; j < mCellCount; j++) {
+            copyBoard[i][j] = board[i][j];
+        }
+    }
+    QList<QList<int>> moves = board[posY][posX]->moves(board, posX, posY);
     QList<QList<int>> validMoves;
 
     QSharedPointer<ChessPiece> pieceOnPos = nullptr;
     for (const QList<int>& move : moves) {
         int moveX = move[0];
         int moveY = move[1];
-        pieceOnPos = board[moveY][moveX];
-        board[moveY][moveX] = board[mSelectedY][mSelectedX];
-        board[mSelectedY][mSelectedX] = nullptr;
+        pieceOnPos = copyBoard[moveY][moveX];
+        copyBoard[moveY][moveX] = copyBoard[posY][posX];
+        copyBoard[posY][posX] = nullptr;
 
-        if (!isCheck(players[mCurrentPlayerIndex])) {
+        if (!isCheck(players[mCurrentPlayerIndex], copyBoard)) {
             validMoves.push_back(move);
         }
 
-        board[mSelectedY][mSelectedX] = board[moveY][moveX];
-        board[moveY][moveX] = pieceOnPos;
+        copyBoard[posY][posX] = copyBoard[moveY][moveX];
+        copyBoard[moveY][moveX] = pieceOnPos;
     }
 
     return validMoves;
@@ -169,25 +175,28 @@ void ChessBoard::move() {
         flipBoard();
     }
 
-    mCheck = isCheck(players[mCurrentPlayerIndex]);
+    mCheck = isCheck(players[mCurrentPlayerIndex], board);
+    mStalemate = isStalemate(players[mCurrentPlayerIndex], board);
     setCheckPos(players[mCurrentPlayerIndex]);
 
     emit moved();
+    if (mStalemate)
+        gameOver();
 }
 
-bool ChessBoard::isCheck(QSharedPointer<Player> p) const
+bool ChessBoard::isCheck(QSharedPointer<Player> p, const QSharedPointer<ChessPiece> copyBoard[][8]) const
 {
     for (size_t i = 0; i < mCellCount; i++) {
         for (size_t j = 0; j < mCellCount; j++) {
-            if (board[i][j] == nullptr || (board[i][j] != nullptr && board[i][j]->getPlayerInfo() == p))
+            if (copyBoard[i][j] == nullptr || (copyBoard[i][j] != nullptr && copyBoard[i][j]->getPlayerInfo() == p))
                 continue;
 
-            QList<QList<int>> piece_move = board[i][j]->moves(board, j, i);
+            QList<QList<int>> piece_move = copyBoard[i][j]->moves(copyBoard, j, i);
             for (const QList<int>& move : piece_move) {
                 int posX = move[0];
                 int posY = move[1];
 
-                if (dynamic_cast<King*>(board[posY][posX].get())) {
+                if (dynamic_cast<King*>(copyBoard[posY][posX].get())) {
                     return true;
                 }
             }
@@ -241,6 +250,33 @@ void ChessBoard::setCheckPos(QSharedPointer<Player> p) {
                     mCheckPosY = posY;
                     return;
                 }
+            }
+        }
+    }
+}
+
+bool ChessBoard::isStalemate(QSharedPointer<Player> p, const QSharedPointer<ChessPiece> copyBoard[][8]) const
+{
+    for (size_t i = 0; i < mCellCount; i++) {
+        for (size_t j = 0; j < mCellCount; j++) {
+            if (copyBoard[i][j] && copyBoard[i][j]->getPlayerInfo() == p && !validMoves(j, i).empty()) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+void ChessBoard::gameOver()
+{
+    started = false;
+    players[0] = nullptr;
+    players[1] = nullptr;
+    for (size_t i = 0; i < mCellCount; i++) {
+        for (size_t j = 0; j < mCellCount; j++) {
+            if (board[i][j]) {
+                board[i][j]->setPlayerNull();
             }
         }
     }

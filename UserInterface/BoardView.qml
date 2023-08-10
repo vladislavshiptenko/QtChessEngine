@@ -90,14 +90,12 @@ Canvas {
             boardLogic.selectedX = Math.floor(mouseX / cellLength);
             boardLogic.selectedY = Math.floor(mouseY / cellLength);
             if (boardLogic.isYourPiece(boardLogic.selectedX, boardLogic.selectedY)) {
-                parent.possibleMoves = boardLogic.validMoves();
+                parent.possibleMoves = boardLogic.validMoves(boardLogic.selectedX, boardLogic.selectedY);
                 boardLogic.selected = true;
             }
             else {
                 if (boardLogic.selected && isFind([boardLogic.selectedX, boardLogic.selectedY])) {
                     boardLogic.move();
-                    gameMenu.declareCheck(boardLogic.check);
-                    changePosition();
                 }
 
                 boardLogic.selected = false;

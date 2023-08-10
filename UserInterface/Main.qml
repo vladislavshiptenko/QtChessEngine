@@ -20,6 +20,19 @@ Window {
         }
         onMoved: {
             gamePlayMenu.setPlayers();
+            if (boardLogic.check && boardLogic.stalemate) {
+                gameMenu.declareCheck(false);
+                gameMenu.declareCheckmate();
+            }
+            else if (boardLogic.stalemate) {
+                gameMenu.declareCheck(false);
+                gameMenu.declareStalemate();
+            }
+            else {
+                gameMenu.declareCheck(boardLogic.check);
+            }
+
+            board.changePosition();
         }
     }
 

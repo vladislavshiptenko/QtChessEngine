@@ -20,6 +20,10 @@ public:
     {
         return player;
     }
+    void setPlayerNull()
+    {
+        player = nullptr;
+    }
 
 protected:
     QString blackPieceName = "black";
