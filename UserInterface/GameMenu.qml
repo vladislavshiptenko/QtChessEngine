@@ -17,37 +17,61 @@ Item {
         gameOverText.text = "Checkmate. " + gamePlayMenu.players[(boardLogic.currentPlayerIndex + 1) % 2].name + " wins!"
         gamePlayMenu.players[boardLogic.currentPlayerIndex].stopTimer();
     }
-
-    ListView {
-        id: movesList
+    
+    Rectangle {
+        id: movesListWrapper
+        color: rightMenu.color
         width: parent.width
         height: parent.height / 2
         anchors.top: parent.top
+
+        ListView {
+            id: movesList
+            anchors.fill: parent
+        }
     }
-    Item {
-        id: gameOverMenu
+    Rectangle {
+        id: gameOverMenuWrapper
         width: parent.width
         height: parent.height / 6
-        anchors.top: movesList.bottom
+        anchors.top: movesListWrapper.bottom
+        color: "#272522"
 
-        Text {
-            id: isCheck
-            text: "Check"
-            color: "red"
-            visible: false
-            anchors.centerIn: parent
-            font.pixelSize: 20
-        }
-        Text {
-            id: gameOverText
-            color: "red"
-            visible: false
-            anchors.centerIn: parent
-            font.pixelSize: 20
+        Item {
+            id: gameOverMenu
+            anchors.fill: parent
+            
+            Text {
+                id: isCheck
+                text: "Check"
+                color: "red"
+                visible: false
+                anchors.centerIn: parent
+                font.pixelSize: 20
+            }
+            Text {
+                id: gameOverText
+                color: "red"
+                visible: false
+                anchors.centerIn: parent
+                font.pixelSize: 20
+            }
         }
     }
-    ListView {
+    Rectangle {
+        anchors.bottom: parent.bottom
+        color: rightMenu.color
         width: parent.width
         height: parent.height / 3
+
+        ListView {
+            height: parent.height - messageTextField.height
+        }
+        TextField {
+            id: messageTextField
+            width: parent.width
+            anchors.bottom: parent.bottom
+            placeholderText: "Enter your message"
+        }
     }
 }

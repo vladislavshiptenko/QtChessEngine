@@ -129,13 +129,15 @@ Window {
         }
 
         Rectangle {
+            id: rightMenu
+
             Layout.fillHeight: true
             Layout.fillWidth: true
             Layout.column: 2
             Layout.minimumWidth: 200
             Layout.preferredWidth: 300
             Layout.maximumWidth: 300
-            color: "#272522"
+            color: "#22201d"
             StartMenu {
                 id: startMenu
                 anchors.fill: parent
