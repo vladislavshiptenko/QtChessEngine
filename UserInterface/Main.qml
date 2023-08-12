@@ -111,7 +111,7 @@ Window {
             Player {
                 id: p1
                 readonly property int indexPlayer: 0
-                name: "Kek"
+                name: "Player1"
                 anchors.top: parent.top
             }
             BoardView {
@@ -123,10 +123,11 @@ Window {
             Player {
                 id: p2
                 readonly property int indexPlayer: 1
-                name: "Lol"
+                name: "Player2"
                 anchors.bottom: parent.bottom
             }
         }
+
         Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -144,5 +145,9 @@ Window {
                 anchors.fill: parent
             }
         }
+    }
+
+    GameDialog {
+        id: gameDialog
     }
 }

@@ -8,10 +8,12 @@ Item {
 
     function stopTimer() {
         elapsedTimer.stop()
+        timeLeft.color = "#989795"
     }
 
     function runTimer() {
         elapsedTimer.start()
+        timeLeft.color = "white"
     }
 
     Text {
@@ -23,6 +25,7 @@ Item {
         font.pixelSize: 25
     }
     Rectangle {
+        id: timeLeft
         width: 100
         height: parent.height - 15
         anchors.right: parent.right

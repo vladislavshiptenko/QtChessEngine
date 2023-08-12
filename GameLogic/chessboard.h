@@ -3,6 +3,7 @@
 #include <QQmlEngine>
 #include "Pieces/chesspiece.h"
 #include "player.h"
+#include <QScopedPointer>
 
 namespace qtchess {
 

@@ -8,7 +8,7 @@ Item {
         anchors.centerIn: parent
         onClicked: {
             parent.visible = false;
-            boardLogic.startGame(mode.model[mode.currentIndex])
+            gameDialog.open(mode.model[mode.currentIndex]);
         }
     }
     ComboBox {
